@@ -1,0 +1,10 @@
+{
+  "description": "Manage medical clinics offline with patient records, appointments, billing, and reports in a simple, Arabic-friendly interface ensuring data safety locally.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "licenses": [
+    {
+      "id": "lic_mu72tgli",
+      "licenseKey": "CLIN-MQXL-QU9K-A3GE",
+      "planType": "monthly",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-18T14:51:17.190Z",
+      "startsAt": "2026-09-18T14:51:17.190Z",
+      "expiresAt": "2068-03-11T14:51:17.190Z",
+      "notes": "test",
+      "devices": []
+    },
+    {
+      "id": "lic_mu6xdwpz",
+      "licenseKey": "CLIN-CMSG-84PM-ZRZ2",
+      "planType": "trial",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-18T12:19:13.511Z",
+      "startsAt": "2026-09-18T12:19:13.511Z",
+      "expiresAt": "2027-09-13T12:19:13.511Z",
+      "notes": "",
+      "devices": []
+    },
+    {
+      "id": "lic_mu64bjym",
+      "licenseKey": "CLIN-62GH-PDR8-9HYV",
+      "planType": "yearly",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-17T22:45:34.798Z",
+      "startsAt": "2026-09-17T22:45:34.798Z",
+      "expiresAt": "2027-09-12T22:45:34.798Z",
+      "notes": "",
+      "devices": []
+    },
+    {
+      "id": "lic_year_001",
+      "licenseKey": "CLIN-2026-YEAR-0001",
+      "planType": "yearly",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-17T22:35:40.755Z",
+      "startsAt": "2026-09-17T22:35:40.755Z",
+      "expiresAt": "2027-09-17T22:35:40.755Z",
+      "notes": "ترخيص سنوي للعيادة الرئيسية (جهاز واحد)",
+      "devices": []
+    },
+    {
+      "id": "lic_month_002",
+      "licenseKey": "CLIN-2026-MONT-0002",
+      "planType": "monthly",
+      "maxDevices": 2,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-17T22:35:40.755Z",
+      "startsAt": "2026-09-17T22:35:40.755Z",
+      "expiresAt": "2026-10-17T22:35:40.755Z",
+      "notes": "ترخيص شهري لجهازين (الاستقبال + الطبيب)",
+      "devices": []
+    },
+    {
+      "id": "lic_trial_003",
+      "licenseKey": "CLIN-2026-TRIA-0003",
+      "planType": "trial",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-17T22:35:40.755Z",
+      "startsAt": "2026-09-17T22:35:40.755Z",
+      "expiresAt": "2026-10-01T22:35:40.755Z",
+      "notes": "فترة تجريبية 14 يوم",
+      "devices": []
+    },
+    {
+      "id": "lic_exp_004",
+      "licenseKey": "CLIN-2026-EXPR-0004",
+      "planType": "monthly",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-08-13T22:35:40.755Z",
+      "startsAt": "2026-08-13T22:35:40.755Z",
+      "expiresAt": "2026-09-12T22:35:40.755Z",
+      "notes": "ترخيص منتهي الصلاحية لاختبار شاشات التنبيه",
+      "devices": []
+    }
+  ],
+  "logs": [
+    {
+      "id": "log_1789684604634",
+      "licenseId": "lic_year_001",
+      "deviceId": "DEV-TEST-0001-AABB",
+      "action": "activate",
+      "timestamp": "2026-09-17T22:36:44.634Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789685146169",
+      "licenseId": "lic_mu64bjym",
+      "deviceId": "DEV-D895-89DE-F0E6-882F",
+      "action": "activate",
+      "timestamp": "2026-09-17T22:45:46.169Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789685214831",
+      "licenseId": "lic_mu64bjym",
+      "deviceId": "DEV-D895-89DE-F0E6-882F",
+      "action": "deactivate",
+      "timestamp": "2026-09-17T22:46:54.831Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789685224600",
+      "licenseId": "lic_mu64bjym",
+      "deviceId": "DEV-D895-89DE-F0E6-882F",
+      "action": "activate",
+      "timestamp": "2026-09-17T22:47:04.600Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789733977280",
+      "licenseId": "lic_mu6xdwpz",
+      "deviceId": "DEV-12A1-8A61-463C-B0F1",
+      "action": "activate",
+      "timestamp": "2026-09-18T12:19:37.280Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743091946",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "activate",
+      "timestamp": "2026-09-18T14:51:31.946Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743273718",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "activate",
+      "timestamp": "2026-09-18T14:54:33.718Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743276128",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:36.128Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743276544",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:36.544Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743276855",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:36.855Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743279672",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:39.672Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743280078",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:40.078Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743280333",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:40.333Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743280488",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:40.488Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743280861",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:40.861Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789743281254",
+      "licenseId": "lic_mu72tgli",
+      "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
+      "action": "refresh",
+      "timestamp": "2026-09-18T14:54:41.254Z",
+      "ip": "::1"
+    }
+  ]
+}

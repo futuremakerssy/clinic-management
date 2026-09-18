@@ -1,0 +1,24 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.clinic.management.desktop
+productName: ClinicManagement
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+win:
+  target:
+    - target: portable
+      arch:
+        - x64
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: برنامج إدارة العيادة الطبية
+electronVersion: 44.4.2
