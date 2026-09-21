@@ -111,7 +111,9 @@ export const licenseApi = {
   },
 
   // ── Admin operations ──────────────────────────────────────────────────
-  getAdminLicenses: async (): Promise<ApiResponse<{ licenses: LicenseRecord[] }>> => {
+  getAdminLicenses: async (): Promise<ApiResponse<{
+    licenses: LicenseRecord[]
+  }>> => {
     return await request("/api/admin/licenses", { method: "GET" })
   },
 
@@ -148,8 +150,11 @@ export const licenseApi = {
     licenseId: string,
     deviceId: string,
   ): Promise<ApiResponse> => {
-    return await request(`/api/admin/licenses/${licenseId}/devices/${deviceId}`, {
-      method: "DELETE",
-    })
+    return await request(
+      `/api/admin/licenses/${licenseId}/devices/${deviceId}`,
+      {
+        method: "DELETE",
+      },
+    )
   },
 }

@@ -73,10 +73,26 @@ export const patientStore = {
 
 // ── Doctors ───────────────────────────────────────────────────────────────────
 export const doctorStore = {
-  getAll: () => load<Doctor[]>(KEYS.doctors, []),
+  getAll: () => {
+    const list = load<Doctor[]>(KEYS.doctors, [])
+    return list.map((d) => ({
+      ...d,
+      schedule: Array.isArray(d.schedule) ? d.schedule : [],
+      color: d.color || "#2563eb",
+      specialty: d.specialty || "طبيب عام",
+      phone: d.phone || "",
+    }))
+  },
   get: (id: string) => doctorStore.getAll().find((d) => d.id === id),
   add: (data: Omit<Doctor, "id">) => {
-    const doctor: Doctor = { ...data, id: uid() }
+    const doctor: Doctor = {
+      ...data,
+      id: uid(),
+      schedule: Array.isArray(data.schedule) ? data.schedule : [],
+      color: data.color || "#2563eb",
+      specialty: data.specialty || "طبيب عام",
+      phone: data.phone || "",
+    }
     save(KEYS.doctors, [...doctorStore.getAll(), doctor])
     return doctor
   },
@@ -233,4 +249,3 @@ export function seedDemoData(): void {
     localStorage.setItem(pinResetKey, "true")
   }
 }
-

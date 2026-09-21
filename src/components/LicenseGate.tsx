@@ -44,7 +44,8 @@ export default function LicenseGate({ onNavigate, currentView }: Props) {
       "يرجى مراجعة إدارة النظام أو إدخال مفتاح ترخيص جديد لمتابعة العمل."
   } else if (isSuspended) {
     message = "الترخيص معلق مؤقتاً"
-    submessage = "يرجى الاتصال بالإنترنت لتحديث حالة الترخيص واستئناف الصلاحيات."
+    submessage =
+      "يرجى الاتصال بالإنترنت لتحديث حالة الترخيص واستئناف الصلاحيات."
   } else if (isGraceExpired) {
     message = "انتهت فترة السماح للعمل بدون إنترنت (7 أيام)"
     submessage =

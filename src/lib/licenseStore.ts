@@ -53,14 +53,22 @@ export const licenseStore = {
     // If current system time has been turned backwards by more than 5 minutes
     // compared to the highest recorded system time, flag clock tampering!
     let clockTampered = state.clockTampered
-    if (state.lastKnownSystemTime > 0 && now < state.lastKnownSystemTime - 5 * 60 * 1000) {
+    if (
+      state.lastKnownSystemTime > 0 &&
+      now < state.lastKnownSystemTime - 5 * 60 * 1000
+    ) {
       clockTampered = true
     } else {
       state.lastKnownSystemTime = Math.max(state.lastKnownSystemTime || 0, now)
     }
 
     // ── Offline Grace Period Calculation (7 days) ───────────────────────
-    const graceMs = (state.offlineGraceDays || DEFAULT_GRACE_PERIOD_DAYS) * 24 * 60 * 60 * 1000
+    const graceMs =
+      (state.offlineGraceDays || DEFAULT_GRACE_PERIOD_DAYS) *
+      24 *
+      60 *
+      60 *
+      1000
     const timeSinceVerification = now - (state.lastVerifiedTimestamp || 0)
     const isOfflineGraceValid =
       state.lastVerifiedTimestamp > 0 && timeSinceVerification <= graceMs
@@ -163,7 +171,8 @@ export const licenseStore = {
       return {
         isValid: false,
         status: "SUSPENDED",
-        reason: "تم اكتشاف تعديل غير طبيعي في ساعة النظام. يرجى الاتصال بالإنترنت لإعادة التحقق",
+        reason:
+          "تم اكتشاف تعديل غير طبيعي في ساعة النظام. يرجى الاتصال بالإنترنت لإعادة التحقق",
       }
     }
 
@@ -173,7 +182,8 @@ export const licenseStore = {
       return {
         isValid: false,
         status: "REVOKED",
-        reason: "هذا الترخيص مخصص لجهاز آخر ولا يمكن تشغيله على هذا الجهاز المنسوخ إليه",
+        reason:
+          "هذا الترخيص مخصص لجهاز آخر ولا يمكن تشغيله على هذا الجهاز المنسوخ إليه",
       }
     }
 
@@ -206,7 +216,8 @@ export const licenseStore = {
       return {
         isValid: false,
         status: "SUSPENDED",
-        reason: "انتهت فترة السماح للعمل بدون إنترنت (7 أيام). يرجى الاتصال بالإنترنت للتحقق",
+        reason:
+          "انتهت فترة السماح للعمل بدون إنترنت (7 أيام). يرجى الاتصال بالإنترنت للتحقق",
       }
     }
 

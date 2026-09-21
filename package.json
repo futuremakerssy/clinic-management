@@ -1,5 +1,5 @@
 {
-  "name": "figma-make-app",
+  "name": "my-clinic",
   "private": true,
   "version": "1.0.0",
   "description": "نظام إدارة العيادة الطبية",
@@ -37,7 +37,7 @@
   },
   "build": {
     "appId": "com.clinic.management.desktop",
-    "productName": "ClinicManagement",
+    "productName": "My clinic",
     "directories": {
       "output": "release"
     },

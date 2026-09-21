@@ -98,7 +98,8 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
       } else {
         setActionMessage({
           type: "error",
-          text: res.error || "فشل التفعيل. يرجى التحقق من المفتاح أو حالة الخادم",
+          text:
+            res.error || "فشل التفعيل. يرجى التحقق من المفتاح أو حالة الخادم",
         })
       }
     } catch {
@@ -119,7 +120,10 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
 
     try {
       const dev = await getDeviceFingerprint()
-      const res = await licenseApi.refresh(licenseState.licenseKey, dev.deviceId)
+      const res = await licenseApi.refresh(
+        licenseState.licenseKey,
+        dev.deviceId,
+      )
 
       if (res.success && res.token) {
         licenseStore.applyActivation(res.token, dev.deviceId, dev.deviceName)
@@ -133,7 +137,8 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
         setActionMessage({
           type: "error",
           text:
-            res.error || "تعذر تحديث الترخيص عبر الخادم. استمرار العمل بوضع الأوفلاين",
+            res.error ||
+            "تعذر تحديث الترخيص عبر الخادم. استمرار العمل بوضع الأوفلاين",
         })
       }
     } catch {
@@ -194,15 +199,36 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
     trial: "فترة تجريبية (Trial)",
   }
 
-  const statusBadges: Record<
-    SubscriptionStatus,
-    { label: string; bg: string; text: string }
-  > = {
-    ACTIVE: { label: "نشط ومفعل", bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700" },
-    TRIAL: { label: "فترة تجريبية", bg: "bg-blue-50 border-blue-200", text: "text-blue-700" },
-    EXPIRED: { label: "منتهي الصلاحية", bg: "bg-rose-50 border-rose-200", text: "text-rose-700" },
-    SUSPENDED: { label: "معلق مؤقتاً", bg: "bg-amber-50 border-amber-200", text: "text-amber-700" },
-    REVOKED: { label: "ملغى نهائياً", bg: "bg-red-50 border-red-200", text: "text-red-700" },
+  const statusBadges: Record<SubscriptionStatus, {
+    label: string
+    bg: string
+    text: string
+  }> = {
+    ACTIVE: {
+      label: "نشط ومفعل",
+      bg: "bg-emerald-50 border-emerald-200",
+      text: "text-emerald-700",
+    },
+    TRIAL: {
+      label: "فترة تجريبية",
+      bg: "bg-blue-50 border-blue-200",
+      text: "text-blue-700",
+    },
+    EXPIRED: {
+      label: "منتهي الصلاحية",
+      bg: "bg-rose-50 border-rose-200",
+      text: "text-rose-700",
+    },
+    SUSPENDED: {
+      label: "معلق مؤقتاً",
+      bg: "bg-amber-50 border-amber-200",
+      text: "text-amber-700",
+    },
+    REVOKED: {
+      label: "ملغى نهائياً",
+      bg: "bg-red-50 border-red-200",
+      text: "text-red-700",
+    },
   }
 
   // Days remaining calculation
@@ -298,10 +324,13 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
         <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm flex items-start gap-3">
           <Clock size={20} className="text-amber-600 mt-0.5 flex-shrink-0" />
           <div>
-            <div className="font-bold">تحذير أمني: تم اكتشاف تعديل في وقت الجهاز</div>
+            <div className="font-bold">
+              تحذير أمني: تم اكتشاف تعديل في وقت الجهاز
+            </div>
             <p className="mt-1 text-xs text-amber-700">
-              تم إرجاع ساعة الجهاز للوراء بشكل غير منطقي. يرجى ضبط الساعة الصحيحة
-              والاتصال بالسيرفر للتحقق من الترخيص. لم يتم حذف أي من بيانات العيادة.
+              تم إرجاع ساعة الجهاز للوراء بشكل غير منطقي. يرجى ضبط الساعة
+              الصحيحة والاتصال بالسيرفر للتحقق من الترخيص. لم يتم حذف أي من
+              بيانات العيادة.
             </p>
           </div>
         </div>
@@ -325,7 +354,9 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Key & Plan */}
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2">
-              <div className="text-xs text-slate-500 font-medium">مفتاح الترخيص</div>
+              <div className="text-xs text-slate-500 font-medium">
+                مفتاح الترخيص
+              </div>
               <div className="font-mono text-base font-bold text-slate-800 tracking-wider">
                 {licenseState.licenseKey}
               </div>
@@ -347,11 +378,14 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
               <div className="font-bold text-base text-slate-800 flex items-center gap-2">
                 <Calendar size={18} className="text-blue-600" />
                 {licenseState.expiresAt
-                  ? new Date(licenseState.expiresAt).toLocaleDateString("ar-SA", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                  ? new Date(licenseState.expiresAt).toLocaleDateString(
+                      "ar-SA",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )
                   : "—"}
               </div>
               <div className="text-xs text-slate-500 pt-2">
@@ -389,7 +423,10 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
                 {licenseState.isOfflineGraceValid ? (
                   <>
                     <WifiOff size={16} className="text-teal-600" />
-                    <span>متاح أوفلاين ({Math.round(graceHoursRemaining / 24)} أيام متبقية)</span>
+                    <span>
+                      متاح أوفلاين ({Math.round(graceHoursRemaining / 24)} أيام
+                      متبقية)
+                    </span>
                   </>
                 ) : (
                   <>
@@ -417,8 +454,8 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
               لا يوجد ترخيص نشط على هذا الجهاز
             </div>
             <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              أدخل مفتاح الترخيص الخاص بعيادتك لتفعيل النظام وربطه بهذا الجهاز للعمل
-              Offline.
+              أدخل مفتاح الترخيص الخاص بعيادتك لتفعيل النظام وربطه بهذا الجهاز
+              للعمل Offline.
             </p>
           </div>
         )}

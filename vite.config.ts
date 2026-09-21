@@ -5,6 +5,36 @@ import path from "node:path"
 
 import siteConfiguration from "./.figma/make/site.json"
 
+import { spawn } from "node:child_process"
+import http from "node:http"
+
+function autoStartLicenseServer(): Plugin {
+  return {
+    name: "auto-start-license-server",
+    configureServer() {
+      const req = http.get("http://localhost:3001/api/health", () => {})
+      req.on("error", () => {
+        try {
+          const child = spawn(
+            "node",
+            ["--experimental-strip-types", "server/server.ts"],
+            {
+              stdio: "inherit",
+              shell: true,
+              detached: false,
+            },
+          )
+          child.on("error", (err) => {
+            console.warn("Could not auto-start license server:", err.message)
+          })
+        } catch (e) {
+          console.warn("Failed to spawn license server:", e)
+        }
+      })
+    },
+  }
+}
+
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
@@ -21,6 +51,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      autoStartLicenseServer(),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -38,10 +69,38 @@ export default defineConfig(({ mode }) => {
       watch: {
         ignored: ["**/.figma/**"],
       },
+      proxy: {
+        "/admin": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+        "/api/admin": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+        "/api/license": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+      },
     },
     preview: {
       host: process.env.FIGMA_DEV_SERVER_HOST || "0.0.0.0",
       port: parseInt(process.env.PORT || "8443"),
+      proxy: {
+        "/admin": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+        "/api/admin": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+        "/api/license": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+      },
     },
   }
 })
@@ -92,7 +151,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
     return html.replace(`<!-- ${slotName} -->`, content)
   }
 
-  const title = config.title ?? "Figma Make App"
+  const title = config.title ?? "My clinic"
   const description = config.description ?? ""
   const favicon = config.icons?.icon ?? ""
   const socialImage = config.openGraph?.image ?? ""

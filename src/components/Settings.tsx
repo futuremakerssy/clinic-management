@@ -159,7 +159,9 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
               </span>
               {licenseState.expiresAt && (
                 <span className="text-xs text-slate-300 mr-2 font-normal">
-                  (ينتهي في: {new Date(licenseState.expiresAt).toLocaleDateString("ar-SA")})
+                  (ينتهي في:{" "}
+                  {new Date(licenseState.expiresAt).toLocaleDateString("ar-SA")}
+                  )
                 </span>
               )}
             </div>
@@ -315,7 +317,8 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
                   استعادة 1234
                 </button>
                 <span className="text-xs text-slate-500">
-                  تأكد من الضغط على زر "حفظ الإعدادات" بالأسفل لتثبيت الرمز الجديد.
+                  تأكد من الضغط على زر "حفظ الإعدادات" بالأسفل لتثبيت الرمز
+                  الجديد.
                 </span>
               </div>
             </div>
@@ -429,7 +432,8 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
               <RefreshCcw size={28} className="text-amber-600" />
             </div>
             <p className="text-slate-700 font-medium">
-              سيتم مسح جميع المرضى والأطباء والمواعيد والزيارات الوهمية لتبدأ العيادة بسجل نظيف تماماً!
+              سيتم مسح جميع المرضى والأطباء والمواعيد والزيارات الوهمية لتبدأ
+              العيادة بسجل نظيف تماماً!
             </p>
             <p className="text-sm text-slate-500">
               لن تتأثر إعدادات العيادة، العملة المختارة، أو بيانات الترخيص.

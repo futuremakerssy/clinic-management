@@ -60,14 +60,13 @@ export async function getDeviceFingerprint(): Promise<{
   rawComponents: Record<string, unknown>
 }> {
   const salt = getOrCreateDeviceSalt()
-  const nav = typeof navigator !== "undefined" ? navigator : ({} as Navigator)
-  const scr = typeof screen !== "undefined" ? screen : ({} as Screen)
+  const nav = typeof navigator !== "undefined" ? navigator : {} as Navigator
+  const scr = typeof screen !== "undefined" ? screen : {} as Screen
 
   // Stable hardware components:
   const cores = nav.hardwareConcurrency || 4
   const platform = nav.platform || "Win32"
-  const timezone =
-    Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone || "UTC"
+  const timezone = Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone || "UTC"
   const colorDepth = scr.colorDepth || 24
   const canvasHash = getCanvasFingerprint()
 

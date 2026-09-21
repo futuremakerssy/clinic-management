@@ -9,7 +9,7 @@ function createWindow() {
     height: 850,
     minWidth: 1024,
     minHeight: 700,
-    title: "نظام إدارة العيادة الطبية",
+    title: "My clinic",
     backgroundColor: "#f8fafc",
     autoHideMenuBar: true,
     show: false,
@@ -22,6 +22,14 @@ function createWindow() {
 
   // Remove default browser menu bar for sleek native app feel
   Menu.setApplicationMenu(null)
+
+  // Handle F11 fullscreen
+  mainWindow.webContents.on("before-input-event", (event, input) => {
+    if (input.key === "F11" && input.type === "keyDown") {
+      mainWindow.setFullScreen(!mainWindow.isFullScreen())
+      event.preventDefault()
+    }
+  })
 
   // Load the production build
   const indexPath = path.join(__dirname, "../dist/index.html")

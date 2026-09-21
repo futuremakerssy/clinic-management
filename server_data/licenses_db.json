@@ -70,7 +70,17 @@
       "startsAt": "2026-09-17T22:35:40.755Z",
       "expiresAt": "2026-10-01T22:35:40.755Z",
       "notes": "فترة تجريبية 14 يوم",
-      "devices": []
+      "devices": [
+        {
+          "id": "dev_blcf78o",
+          "licenseId": "lic_trial_003",
+          "deviceId": "DEV-8334-A7C1-C594-2DF6",
+          "deviceName": "Windows Desktop (12 Cores)",
+          "activatedAt": "2026-09-21T11:01:30.001Z",
+          "lastSeenAt": "2026-09-21T11:03:15.918Z",
+          "isActive": true
+        }
+      ]
     },
     {
       "id": "lic_exp_004",
@@ -212,6 +222,22 @@
       "deviceId": "DEV-BCBE-B3BB-9DF0-6B0F",
       "action": "refresh",
       "timestamp": "2026-09-18T14:54:41.254Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789988490001",
+      "licenseId": "lic_trial_003",
+      "deviceId": "DEV-8334-A7C1-C594-2DF6",
+      "action": "activate",
+      "timestamp": "2026-09-21T11:01:30.001Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789988595918",
+      "licenseId": "lic_trial_003",
+      "deviceId": "DEV-8334-A7C1-C594-2DF6",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:03:15.918Z",
       "ip": "::1"
     }
   ]

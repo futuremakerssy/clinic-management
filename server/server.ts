@@ -4,7 +4,8 @@ import path from "node:path"
 import crypto from "node:crypto"
 
 const PORT = process.env.LICENSE_SERVER_PORT || 3001
-const ADMIN_SECRET = process.env.LICENSE_ADMIN_SECRET || "Admin_Clinic_Master_2026!"
+const ADMIN_SECRET =
+  process.env.LICENSE_ADMIN_SECRET || "Admin_Clinic_Master_2026!"
 const DATA_DIR = path.resolve(process.cwd(), "server_data")
 const DB_FILE = path.join(DATA_DIR, "licenses_db.json")
 const KEYS_FILE = path.join(DATA_DIR, "keys.json")
@@ -251,7 +252,10 @@ keyPair = initKeys()
 let db = initDb()
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`)
+  const url = new URL(
+    req.url || "/",
+    `http://${req.headers.host || "localhost"}`,
+  )
   const pathname = url.pathname
   const method = req.method?.toUpperCase() || "GET"
 
@@ -266,14 +270,17 @@ const server = http.createServer(async (req, res) => {
   }
 
   const clientIp =
-    (req.headers["x-forwarded-for"] as string) ||
+    req.headers["x-forwarded-for"] as string ||
     req.socket.remoteAddress ||
     "127.0.0.1"
 
   try {
     // ── GET /api/health ───────────────────────────────────────────────────────
     if (method === "GET" && pathname === "/api/health") {
-      return sendJson(res, 200, { status: "ok", timestamp: new Date().toISOString() })
+      return sendJson(res, 200, {
+        status: "ok",
+        timestamp: new Date().toISOString(),
+      })
     }
 
     // ── GET /api/license/public-key ───────────────────────────────────────────
@@ -291,13 +298,16 @@ const server = http.createServer(async (req, res) => {
       if (!licenseKey || !deviceId) {
         return sendJson(res, 400, {
           success: false,
-          error: "يرجى توفير مفتاح الترخيص ومعرف الجهاز (licenseKey & deviceId)",
+          error:
+            "يرجى توفير مفتاح الترخيص ومعرف الجهاز (licenseKey & deviceId)",
         })
       }
 
       db = initDb()
       const cleanKey = licenseKey.trim().toUpperCase()
-      const lic = db.licenses.find((l) => l.licenseKey.toUpperCase() === cleanKey)
+      const lic = db.licenses.find(
+        (l) => l.licenseKey.toUpperCase() === cleanKey,
+      )
 
       if (!lic) {
         return sendJson(res, 404, {
@@ -408,14 +418,17 @@ const server = http.createServer(async (req, res) => {
     // ── POST /api/license/validate or refresh ─────────────────────────────────
     if (
       method === "POST" &&
-      (pathname === "/api/license/validate" || pathname === "/api/license/refresh")
+      (pathname === "/api/license/validate" ||
+        pathname === "/api/license/refresh")
     ) {
       const body = await readJsonBody(req)
       const { licenseKey, deviceId } = body
 
       db = initDb()
       const cleanKey = (licenseKey || "").trim().toUpperCase()
-      const lic = db.licenses.find((l) => l.licenseKey.toUpperCase() === cleanKey)
+      const lic = db.licenses.find(
+        (l) => l.licenseKey.toUpperCase() === cleanKey,
+      )
 
       if (!lic) {
         return sendJson(res, 404, {
@@ -428,7 +441,8 @@ const server = http.createServer(async (req, res) => {
       if (!dev) {
         return sendJson(res, 403, {
           success: false,
-          error: "هذا الجهاز غير مفعل ضمن هذا الترخيص أو تم إلغاؤه من قبل المشرف",
+          error:
+            "هذا الجهاز غير مفعل ضمن هذا الترخيص أو تم إلغاؤه من قبل المشرف",
         })
       }
 
@@ -489,7 +503,9 @@ const server = http.createServer(async (req, res) => {
 
       db = initDb()
       const cleanKey = (licenseKey || "").trim().toUpperCase()
-      const lic = db.licenses.find((l) => l.licenseKey.toUpperCase() === cleanKey)
+      const lic = db.licenses.find(
+        (l) => l.licenseKey.toUpperCase() === cleanKey,
+      )
 
       if (lic) {
         const dev = lic.devices.find((d) => d.deviceId === deviceId)
@@ -513,7 +529,12 @@ const server = http.createServer(async (req, res) => {
       })
     }
 
-    // ── GET /admin (Dedicated Web Admin Portal) ───────────────────────────────
+    // ── GET / or /admin (Dedicated Web Admin Portal) ─────────────────────────
+    if (method === "GET" && (pathname === "/" || pathname === "")) {
+      res.writeHead(302, { Location: "/admin" })
+      return res.end()
+    }
+
     if (method === "GET" && (pathname === "/admin" || pathname === "/admin/")) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" })
       return res.end(getAdminPortalHtml())
@@ -526,17 +547,21 @@ const server = http.createServer(async (req, res) => {
         if (body.password === ADMIN_SECRET) {
           return sendJson(res, 200, { success: true, token: ADMIN_SECRET })
         }
-        return sendJson(res, 401, { success: false, error: "كلمة مرور المشرف غير صحيحة" })
+        return sendJson(res, 401, {
+          success: false,
+          error: "كلمة مرور المشرف غير صحيحة",
+        })
       }
 
       const authHeader = req.headers["authorization"] || ""
-      const keyHeader = (req.headers["x-admin-key"] as string) || ""
+      const keyHeader = req.headers["x-admin-key"] as string || ""
       const providedSecret = keyHeader || authHeader.replace(/^Bearer\s+/i, "")
 
       if (providedSecret !== ADMIN_SECRET) {
         return sendJson(res, 401, {
           success: false,
-          error: "غير مصرح لك بالوصول إلى لوحة المشرف. مفتاح الأدمن غير صالح أو مفقود",
+          error:
+            "غير مصرح لك بالوصول إلى لوحة المشرف. مفتاح الأدمن غير صالح أو مفقود",
         })
       }
     }
@@ -564,7 +589,9 @@ const server = http.createServer(async (req, res) => {
 
       const newLicense: LicenseRecord = {
         id: "lic_" + Date.now().toString(36),
-        licenseKey: customKey ? customKey.trim().toUpperCase() : generateLicenseKey(),
+        licenseKey: customKey
+          ? customKey.trim().toUpperCase()
+          : generateLicenseKey(),
         planType: planType || "monthly",
         maxDevices: Number(maxDevices) || 1,
         status: planType === "trial" ? "TRIAL" : "ACTIVE",
@@ -588,13 +615,17 @@ const server = http.createServer(async (req, res) => {
     if (method === "PATCH" && pathname.startsWith("/api/admin/licenses/")) {
       const licId = pathname.replace("/api/admin/licenses/", "")
       const body = await readJsonBody(req)
-      const { status, expiresAt, maxDevices, planType, extendMonths, notes } = body
+      const { status, expiresAt, maxDevices, planType, extendMonths, notes } =
+        body
 
       db = initDb()
       const lic = db.licenses.find((l) => l.id === licId)
 
       if (!lic) {
-        return sendJson(res, 404, { success: false, error: "الترخيص غير موجود" })
+        return sendJson(res, 404, {
+          success: false,
+          error: "الترخيص غير موجود",
+        })
       }
 
       if (status) lic.status = status
@@ -672,7 +703,10 @@ function getAdminPortalHtml(): string {
   <title>لوحة إدارة التراخيص والاشتراكات - Clinic License Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <style>body { font-family: 'Tajawal', sans-serif; }</style>
+  <style>
+    body { font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #0f172a; color: #f1f5f9; margin: 0; }
+    input, select, button { font-family: inherit; }
+  </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
   <div id="login-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
@@ -911,7 +945,7 @@ function getAdminPortalHtml(): string {
     }
   </script>
 </body>
-</html>`;
+</html>`
 }
 
 export default server

@@ -11,7 +11,12 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react"
-import { patientStore, appointmentStore, visitStore, settingsStore } from "../lib/storage"
+import {
+  patientStore,
+  appointmentStore,
+  visitStore,
+  settingsStore,
+} from "../lib/storage"
 import {
   BLOOD_TYPES,
   GENDER_LABELS,

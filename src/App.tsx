@@ -8,13 +8,21 @@ import {
   Receipt,
   Settings as SettingsIcon,
   Menu,
-  X,
   Bell,
-  Search,
   ShieldCheck,
   Lock,
+  Maximize,
+  Minimize,
+  Download,
+  LogOut,
+  Check,
 } from "lucide-react"
-import { seedDemoData, settingsStore, appointmentStore } from "./lib/storage"
+import {
+  seedDemoData,
+  settingsStore,
+  appointmentStore,
+  exportBackup,
+} from "./lib/storage"
 import { todayISO } from "./lib/utils"
 import type { View } from "./types"
 import Dashboard from "./components/Dashboard"
@@ -27,8 +35,10 @@ import Settings from "./components/Settings"
 import LicenseManager from "./components/LicenseManager"
 import LicenseGate from "./components/LicenseGate"
 import PinLock from "./components/PinLock"
+import InitialSetupModal from "./components/InitialSetupModal"
+import ExitConfirmModal from "./components/ExitConfirmModal"
 
-const NAV: { view: View; label: string; Icon: React.ElementType }[] = [
+const NAV: { view: View label: string Icon: React.ElementType }[] = [
   { view: "dashboard", label: "الرئيسية", Icon: LayoutDashboard },
   { view: "appointments", label: "المواعيد", Icon: Calendar },
   { view: "patients", label: "المرضى", Icon: Users },
@@ -54,40 +64,168 @@ export default function App() {
   const [view, setView] = useState<View>("dashboard")
   const [refreshKey, setRefreshKey] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [clinicName, setClinicName] = useState("عيادة الرعاية الطبية")
+  const [clinicName, setClinicName] = useState("My clinic")
   const [todayCount, setTodayCount] = useState(0)
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false)
 
+  // Fullscreen state
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  // Backup notification & state
+  const [backupToast, setBackupToast] = useState(false)
+  const [lastBackupTime, setLastBackupTime] = useState<string | null>(() => {
+    return localStorage.getItem("clinic_last_backup_time")
+  })
+
+  // Modals state
+  const [showExitModal, setShowExitModal] = useState(false)
+  const [showSetupModal, setShowSetupModal] = useState(false)
+
+  // Set document title & seed demo check
   useEffect(() => {
+    document.title = "My clinic"
     seedDemoData()
     const s = settingsStore.get()
-    setClinicName(s.clinicName)
+    if (s.clinicName && s.clinicName.trim()) {
+      setClinicName(s.clinicName)
+    }
+
+    // Check if initial setup was completed
+    const setupCompleted = localStorage.getItem("clinic_setup_completed")
+    if (
+      !setupCompleted &&
+      (!s.doctorName || s.clinicName === "عيادة الرعاية الطبية")
+    ) {
+      setShowSetupModal(true)
+    }
   }, [])
 
+  // Sync today's appointments count & clinic name
   useEffect(() => {
     const s = settingsStore.get()
-    setClinicName(s.clinicName)
+    if (s.clinicName && s.clinicName.trim()) {
+      setClinicName(s.clinicName)
+    }
     const scheduled = appointmentStore
       .getAll()
       .filter((a) => a.date === todayISO() && a.status === "scheduled").length
     setTodayCount(scheduled)
   }, [refreshKey])
 
-  const refresh = useCallback(() => setRefreshKey((k) => k + 1), [])
+  // Fullscreen listener for F11 & changes
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F11") {
+        e.preventDefault()
+        toggleFullscreen()
+      }
+    }
 
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement))
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+    }
+  }, [])
+
+  // Warning before leaving app if backup not taken today
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const today = new Date().toISOString().slice(0, 10)
+      const lastDate = localStorage.getItem("clinic_last_backup_date")
+      if (lastDate !== today) {
+        e.preventDefault()
+        e.returnValue =
+          "لم يتم حفظ نسخة احتياطية من بيانات العيادة اليوم. هل أنت متأكد من الخروج؟"
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {})
+    } else {
+      document.exitFullscreen().catch(() => {})
+    }
+  }
+
+  // Backup handler
+  const handleBackup = () => {
+    const data = exportBackup()
+    const blob = new Blob([data], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `clinic-backup-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+
+    const now = new Date()
+    const timeStr = now.toLocaleTimeString("ar-SA", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    const dateStr = now.toISOString().slice(0, 10)
+
+    localStorage.setItem("clinic_last_backup_time", timeStr)
+    localStorage.setItem("clinic_last_backup_date", dateStr)
+    setLastBackupTime(timeStr)
+
+    setBackupToast(true)
+    setTimeout(() => setBackupToast(false), 3500)
+  }
+
+  // Exit handlers
+  const handleExitWithBackup = () => {
+    handleBackup()
+    setShowExitModal(false)
+    setTimeout(() => {
+      window.close()
+    }, 600)
+  }
+
+  const handleExitWithoutBackup = () => {
+    setShowExitModal(false)
+    window.close()
+  }
+
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), [])
   const navigate = useCallback((v: View) => setView(v), [])
 
+  const handleSetupComplete = (data: {
+    clinicName: string
+    doctorName: string
+    phone: string
+  }) => {
+    setClinicName(data.clinicName)
+    setShowSetupModal(false)
+    refresh()
+  }
+
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden" dir="rtl">
+    <div
+      className={`flex h-screen bg-slate-100 overflow-hidden ${
+        isFullscreen ? "border-0 p-0 m-0" : ""
+      }`}
+      dir="rtl"
+    >
       {/* Sidebar */}
       <aside
         className={`flex-shrink-0 transition-all duration-300 ${
           sidebarOpen ? "w-60" : "w-16"
-        } bg-slate-900 flex flex-col`}
+        } bg-slate-900 flex flex-col z-20`}
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-700/50">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -112,10 +250,15 @@ export default function App() {
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
-              <div className="text-white font-bold text-sm leading-tight truncate">
+              <div
+                className="text-white font-bold text-sm leading-tight truncate"
+                title={clinicName}
+              >
                 {clinicName}
               </div>
-              <div className="text-slate-400 text-xs">نظام إدارة العيادة</div>
+              <div className="text-blue-400 text-[11px] font-medium">
+                My clinic
+              </div>
             </div>
           )}
         </div>
@@ -127,7 +270,7 @@ export default function App() {
               key={v}
               onClick={() => setView(v)}
               title={!sidebarOpen ? label : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group cursor-pointer ${
                 view === v
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-900/30"
                   : "text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -151,44 +294,103 @@ export default function App() {
           ))}
         </nav>
 
-        {/* Collapse toggle */}
-        <div className="px-2 pb-4">
+        {/* Bottom controls */}
+        <div className="px-2 pb-4 space-y-1 border-t border-slate-800 pt-3">
+          {/* Collapse toggle */}
           <button
             onClick={() => setSidebarOpen((o) => !o)}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors text-sm"
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-xs font-medium cursor-pointer"
+            title={sidebarOpen ? "طي القائمة" : "توسيع القائمة"}
           >
-            <Menu size={18} />
+            <Menu size={16} />
             {sidebarOpen && <span>طي القائمة</span>}
+          </button>
+
+          {/* Quick Exit with Backup prompt */}
+          <button
+            onClick={() => setShowExitModal(true)}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors text-xs font-medium cursor-pointer"
+            title="إغلاق البرنامج"
+          >
+            <LogOut size={16} />
+            {sidebarOpen && <span>إغلاق البرنامج</span>}
           </button>
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
-        <header className="flex-shrink-0 h-14 bg-white border-b border-slate-200 flex items-center px-6 gap-4">
-          <h2 className="font-semibold text-slate-800 text-sm">
-            {VIEW_LABELS[view]}
-          </h2>
-          <div className="mr-auto flex items-center gap-3">
+        <header className="flex-shrink-0 h-14 bg-white border-b border-slate-200 flex items-center px-4 sm:px-6 gap-3 sm:gap-4 z-10">
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-slate-800 text-sm sm:text-base">
+              {VIEW_LABELS[view]}
+            </h2>
+            <span className="hidden lg:inline text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-200/60">
+              My clinic
+            </span>
+          </div>
+
+          <div className="mr-auto flex items-center gap-2 sm:gap-3">
             {/* Today badge */}
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
-              <Calendar size={12} />
-              {new Date().toLocaleDateString("ar-SA", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/80">
+              <Calendar size={13} className="text-slate-500" />
+              <span>
+                {new Date().toLocaleDateString("ar-SA", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
             </div>
+
+            {/* Prominent Backup Button next to the date */}
+            <button
+              type="button"
+              onClick={handleBackup}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/80 rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer"
+              title="تصدير وحفظ نسخة احتياطية من جميع بيانات العيادة"
+            >
+              <Download size={14} className="text-emerald-700" />
+              <span>نسخ احتياطي</span>
+              {lastBackupTime && (
+                <span className="hidden md:inline text-[10px] text-emerald-700/80 font-normal">
+                  ({lastBackupTime})
+                </span>
+              )}
+            </button>
+
             {/* Notification bell */}
-            <button className="relative p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-700 transition-colors">
+            <button
+              onClick={() => setView("appointments")}
+              className="relative p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+              title="المواعيد المجدولة لليوم"
+            >
               <Bell size={18} />
               {todayCount > 0 && (
                 <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
                   {todayCount}
                 </span>
               )}
+            </button>
+
+            {/* Full Screen Toggle (F11) */}
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                isFullscreen
+                  ? "bg-blue-50 text-blue-600 border border-blue-200"
+                  : "hover:bg-slate-100 text-slate-500 hover:text-slate-700"
+              }`}
+              title={
+                isFullscreen
+                  ? "إنهاء ملء الشاشة (F11)"
+                  : "ملء الشاشة وإخفاء الحواف (F11)"
+              }
+            >
+              {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
             </button>
 
             {/* Admin Lock Button when Unlocked */}
@@ -203,6 +405,16 @@ export default function App() {
                 <span>قفل الإدارة (PIN)</span>
               </button>
             )}
+
+            {/* Desktop Exit Button */}
+            <button
+              type="button"
+              onClick={() => setShowExitModal(true)}
+              className="hidden sm:flex items-center gap-1 p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-colors cursor-pointer"
+              title="إغلاق والتأكد من النسخ الاحتياطي"
+            >
+              <LogOut size={17} />
+            </button>
           </div>
         </header>
 
@@ -210,7 +422,7 @@ export default function App() {
         <LicenseGate onNavigate={navigate} currentView={view} />
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bg-slate-50/50">
           {view === "dashboard" && (
             <Dashboard onNavigate={navigate} refresh={refreshKey} />
           )}
@@ -227,8 +439,8 @@ export default function App() {
           {view === "billing" && (
             <Billing refresh={refreshKey} onRefresh={refresh} />
           )}
-          {view === "settings" && (
-            !isAdminUnlocked ? (
+          {view === "settings" &&
+            (!isAdminUnlocked ? (
               <PinLock
                 title="الإعدادات مقفلة برمز سري"
                 subtitle="لحماية إعدادات العيادة، الأسعار، وقاعدة البيانات، يرجى إدخال رمز الأمان السري (PIN)"
@@ -240,10 +452,9 @@ export default function App() {
                 onNavigate={navigate}
                 onLock={() => setIsAdminUnlocked(false)}
               />
-            )
-          )}
-          {view === "license" && (
-            !isAdminUnlocked ? (
+            ))}
+          {view === "license" &&
+            (!isAdminUnlocked ? (
               <PinLock
                 title="نظام الاشتراك والترخيص مقفل برمز سري"
                 subtitle="لحماية رخصة التطبيق وإدارة ربط الأجهزة، يرجى إدخال رمز الأمان السري (PIN)"
@@ -254,10 +465,30 @@ export default function App() {
                 onRefresh={refresh}
                 onLock={() => setIsAdminUnlocked(false)}
               />
-            )
-          )}
+            ))}
         </main>
       </div>
+
+      {/* Initial Setup Modal (First Launch) */}
+      {showSetupModal && <InitialSetupModal onComplete={handleSetupComplete} />}
+
+      {/* Exit Confirmation Modal */}
+      <ExitConfirmModal
+        isOpen={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        onExitWithBackup={handleExitWithBackup}
+        onExitWithoutBackup={handleExitWithoutBackup}
+      />
+
+      {/* Backup Success Toast Notification */}
+      {backupToast && (
+        <div className="fixed bottom-6 left-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <Check size={14} />
+          </div>
+          <span>تم تنزيل النسخة الاحتياطية لبيانات العيادة بنجاح!</span>
+        </div>
+      )}
     </div>
   )
 }

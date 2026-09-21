@@ -52,12 +52,12 @@ export default function Doctors({ refresh, onRefresh }: Props) {
 
   function openEdit(d: Doctor) {
     setForm({
-      name: d.name,
-      specialty: d.specialty,
-      phone: d.phone,
-      color: d.color,
+      name: d.name || "",
+      specialty: d.specialty || SPECIALTIES[0],
+      phone: d.phone || "",
+      color: d.color || DOCTOR_COLORS[0],
       notes: d.notes ?? "",
-      schedule: [...d.schedule],
+      schedule: [...(d.schedule || [])],
     })
     setEditTarget(d)
     setModalOpen(true)
@@ -139,15 +139,18 @@ export default function Doctors({ refresh, onRefresh }: Props) {
               key={doc.id}
               className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
             >
-              <div className="h-2" style={{ backgroundColor: doc.color }} />
+              <div
+                className="h-2"
+                style={{ backgroundColor: doc.color || DOCTOR_COLORS[0] }}
+              />
               <div className="p-5">
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
-                      style={{ backgroundColor: doc.color }}
+                      style={{ backgroundColor: doc.color || DOCTOR_COLORS[0] }}
                     >
-                      {doc.name
+                      {(doc.name || "طبيب")
                         .split(" ")
                         .find(
                           (w) => w !== "د." && w !== "دكتور" && w !== "دكتورة",
@@ -155,9 +158,11 @@ export default function Doctors({ refresh, onRefresh }: Props) {
                         ?.charAt(0) ?? "د"}
                     </div>
                     <div>
-                      <div className="font-bold text-slate-800">{doc.name}</div>
+                      <div className="font-bold text-slate-800">
+                        {doc.name || "طبيب بدون اسم"}
+                      </div>
                       <div className="text-sm text-slate-500">
-                        {doc.specialty}
+                        {doc.specialty || "طبيب عام"}
                       </div>
                     </div>
                   </div>
@@ -185,13 +190,13 @@ export default function Doctors({ refresh, onRefresh }: Props) {
                 )}
 
                 {/* Schedule */}
-                {doc.schedule.length > 0 && (
+                {(doc.schedule?.length ?? 0) > 0 && (
                   <div className="space-y-1.5">
                     <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 mb-2">
                       <Clock size={12} />
                       جدول الدوام
                     </div>
-                    {doc.schedule
+                    {(doc.schedule || [])
                       .sort((a, b) => a.day - b.day)
                       .map((s) => (
                         <div
