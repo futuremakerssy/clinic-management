@@ -5,7 +5,7 @@
       "licenseKey": "CLIN-EUEV-ZFGJ-CWSV",
       "planType": "yearly",
       "maxDevices": 2,
-      "status": "SUSPENDED",
+      "status": "ACTIVE",
       "createdAt": "2026-09-21T13:03:34.628Z",
       "startsAt": "2026-09-21T13:03:34.628Z",
       "expiresAt": "2027-09-21T13:03:34.628Z",
@@ -19,6 +19,15 @@
           "activatedAt": "2026-09-21T13:03:34.635Z",
           "lastSeenAt": "2026-09-21T13:03:34.635Z",
           "isActive": true
+        },
+        {
+          "id": "dev_zzx7df4",
+          "licenseId": "lic_mub9ai1w_yoyg",
+          "deviceId": "DEV-E39C-593D-1F65-FBEF",
+          "deviceName": "Windows Desktop (12 Cores)",
+          "activatedAt": "2026-09-21T15:48:02.790Z",
+          "lastSeenAt": "2026-09-21T15:54:29.472Z",
+          "isActive": true
         }
       ],
       "customerId": "cust_main_clinic"
@@ -28,31 +37,12 @@
       "licenseKey": "CLIN-KWEG-93TG-6X7B",
       "planType": "yearly",
       "maxDevices": 2,
-      "status": "ACTIVE",
+      "status": "REVOKED",
       "createdAt": "2026-09-21T13:01:00.926Z",
       "startsAt": "2026-09-21T13:01:00.926Z",
       "expiresAt": "2027-09-21T13:01:00.926Z",
       "notes": "رخصة سنوية لجهازين مع دفعة مسجلة",
-      "devices": [
-        {
-          "id": "dev_0mv2n1x",
-          "licenseId": "lic_mub977ge_rob6",
-          "deviceId": "test_device_e2e_001",
-          "deviceName": "Dr. Receptionist PC",
-          "activatedAt": "2026-09-21T13:01:00.934Z",
-          "lastSeenAt": "2026-09-21T13:01:00.934Z",
-          "isActive": true
-        },
-        {
-          "id": "dev_vvf9zq4",
-          "licenseId": "lic_mub977ge_rob6",
-          "deviceId": "DEV-12A1-8A61-463C-B0F1",
-          "deviceName": "Windows Desktop (12 Cores)",
-          "activatedAt": "2026-09-21T13:38:31.511Z",
-          "lastSeenAt": "2026-09-21T13:38:31.511Z",
-          "isActive": true
-        }
-      ],
+      "devices": [],
       "customerId": "cust_main_clinic"
     },
     {
@@ -492,9 +482,183 @@
       "action": "activate",
       "timestamp": "2026-09-21T13:38:31.511Z",
       "ip": "::1"
+    },
+    {
+      "id": "log_1790005682790",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "activate",
+      "timestamp": "2026-09-21T15:48:02.790Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005848945",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "validate",
+      "timestamp": "2026-09-21T15:50:48.945Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005874940",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:51:14.940Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005926631",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "validate",
+      "timestamp": "2026-09-21T15:52:06.631Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005936923",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:52:16.923Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005938070",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:52:18.070Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005938455",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:52:18.455Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005938778",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:52:18.778Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005938921",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:52:18.921Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790005982944",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "validate",
+      "timestamp": "2026-09-21T15:53:02.944Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790006058405",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:54:18.405Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790006061570",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:54:21.570Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790006061778",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:54:21.778Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790006061933",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:54:21.933Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1790006069472",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "DEV-E39C-593D-1F65-FBEF",
+      "action": "refresh",
+      "timestamp": "2026-09-21T15:54:29.472Z",
+      "ip": "::1"
     }
   ],
   "auditLogs": [
+    {
+      "id": "aud_mubfea0w_4xee",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من SUSPENDED إلى ACTIVE",
+      "timestamp": "2026-09-21T15:54:28.544Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mubfc6uf_rsnq",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من ACTIVE إلى SUSPENDED",
+      "timestamp": "2026-09-21T15:52:51.111Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mubf5rff_1sr5",
+      "action": "status_change",
+      "licenseId": "lic_mub977ge_rob6",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من ACTIVE إلى REVOKED",
+      "timestamp": "2026-09-21T15:47:51.195Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mubf5q1x_m47k",
+      "action": "device_disconnected",
+      "licenseId": "lic_mub977ge_rob6",
+      "customerId": "cust_main_clinic",
+      "details": "تم فصل الجهاز (Windows Desktop (12 Cores)) من الترخيص CLIN-KWEG-93TG-6X7B",
+      "timestamp": "2026-09-21T15:47:49.413Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mubf5mys_czz1",
+      "action": "device_disconnected",
+      "licenseId": "lic_mub977ge_rob6",
+      "customerId": "cust_main_clinic",
+      "details": "تم فصل الجهاز (Dr. Receptionist PC) من الترخيص CLIN-KWEG-93TG-6X7B",
+      "timestamp": "2026-09-21T15:47:45.412Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mubf5e0i_16o1",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من SUSPENDED إلى ACTIVE",
+      "timestamp": "2026-09-21T15:47:33.810Z",
+      "adminId": "admin"
+    },
     {
       "id": "aud_mub9mzlj_xwvg",
       "action": "status_change",

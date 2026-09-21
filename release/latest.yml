@@ -1,8 +1,8 @@
 version: 1.0.0
 files:
   - url: My-clinic-Setup-1.0.0.exe
-    sha512: uyYq+MRjnsESvCm6i3yMw81RZnzqcuH3CjsiBvZeg0k+Ap6rV5hgkAhDkDnKv920iM1I5DXV95RWXy6TLpSJrA==
-    size: 101646435
+    sha512: HUMh0OdkQBE0wBnjiriqzIiEzUpHax+pzweMnKUS0ipS+8ZuX1SJo73rNpzUzJZLzdpiD7HgKWscHSu4tACZGg==
+    size: 102007153
 path: My-clinic-Setup-1.0.0.exe
-sha512: uyYq+MRjnsESvCm6i3yMw81RZnzqcuH3CjsiBvZeg0k+Ap6rV5hgkAhDkDnKv920iM1I5DXV95RWXy6TLpSJrA==
-releaseDate: '2026-09-21T11:11:29.068Z'
+sha512: HUMh0OdkQBE0wBnjiriqzIiEzUpHax+pzweMnKUS0ipS+8ZuX1SJo73rNpzUzJZLzdpiD7HgKWscHSu4tACZGg==
+releaseDate: '2026-09-21T15:44:29.897Z'

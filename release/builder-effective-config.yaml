@@ -3,6 +3,7 @@ directories:
   buildResources: build
 appId: com.clinic.management.desktop
 productName: My clinic
+icon: build/clinic-icon.ico
 files:
   - filter:
       - dist/**/*
