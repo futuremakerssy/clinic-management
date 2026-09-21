@@ -47,3 +47,61 @@ CREATE TABLE IF NOT EXISTS license_activations (
 );
 
 CREATE INDEX IF NOT EXISTS idx_activations_license ON license_activations(license_id);
+
+-- 4. جدول العملاء والعيادات (customers)
+CREATE TABLE IF NOT EXISTS customers (
+    id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    phone VARCHAR(32) NOT NULL,
+    email VARCHAR(128),
+    notes TEXT,
+    created_at TIMESTAMP NOT NULL,
+    total_paid DECIMAL(12, 2) NOT NULL DEFAULT 0.00
+);
+
+CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone);
+
+-- 5. جدول باقات وخطط الاشتراك (subscription_plans)
+CREATE TABLE IF NOT EXISTS subscription_plans (
+    id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(64) NOT NULL,
+    description TEXT,
+    duration_days INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    currency VARCHAR(8) NOT NULL DEFAULT 'USD',
+    is_active INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL
+);
+
+-- 6. جدول المدفوعات والفواتير (payments)
+CREATE TABLE IF NOT EXISTS payments (
+    id VARCHAR(64) PRIMARY KEY,
+    license_id VARCHAR(64) NOT NULL,
+    customer_id VARCHAR(64),
+    plan_id VARCHAR(64),
+    amount DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(8) NOT NULL DEFAULT 'USD',
+    paid_at TIMESTAMP NOT NULL,
+    note TEXT,
+    admin_id VARCHAR(64),
+    type VARCHAR(16) NOT NULL DEFAULT 'new', -- 'new', 'renewal'
+    CONSTRAINT fk_payments_license FOREIGN KEY (license_id) REFERENCES licenses(id) ON DELETE CASCADE,
+    CONSTRAINT fk_payments_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL,
+    CONSTRAINT fk_payments_plan FOREIGN KEY (plan_id) REFERENCES subscription_plans(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_license ON payments(license_id);
+CREATE INDEX IF NOT EXISTS idx_payments_customer ON payments(customer_id);
+
+-- 7. جدول سجل تدقيق عمليات المشرف (audit_logs)
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id VARCHAR(64) PRIMARY KEY,
+    action VARCHAR(64) NOT NULL,
+    license_id VARCHAR(64),
+    customer_id VARCHAR(64),
+    details TEXT NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    admin_id VARCHAR(64)
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp);

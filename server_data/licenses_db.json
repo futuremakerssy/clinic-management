@@ -1,6 +1,87 @@
 {
   "licenses": [
     {
+      "id": "lic_mub9ai1w_yoyg",
+      "licenseKey": "CLIN-EUEV-ZFGJ-CWSV",
+      "planType": "yearly",
+      "maxDevices": 2,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-21T13:03:34.628Z",
+      "startsAt": "2026-09-21T13:03:34.628Z",
+      "expiresAt": "2027-09-21T13:03:34.628Z",
+      "notes": "رخصة سنوية لجهازين مع دفعة مسجلة",
+      "devices": [
+        {
+          "id": "dev_ul2gojq",
+          "licenseId": "lic_mub9ai1w_yoyg",
+          "deviceId": "test_device_e2e_001",
+          "deviceName": "Dr. Receptionist PC",
+          "activatedAt": "2026-09-21T13:03:34.635Z",
+          "lastSeenAt": "2026-09-21T13:03:34.635Z",
+          "isActive": true
+        }
+      ],
+      "customerId": "cust_main_clinic"
+    },
+    {
+      "id": "lic_mub977ge_rob6",
+      "licenseKey": "CLIN-KWEG-93TG-6X7B",
+      "planType": "yearly",
+      "maxDevices": 2,
+      "status": "ACTIVE",
+      "createdAt": "2026-09-21T13:01:00.926Z",
+      "startsAt": "2026-09-21T13:01:00.926Z",
+      "expiresAt": "2027-09-21T13:01:00.926Z",
+      "notes": "رخصة سنوية لجهازين مع دفعة مسجلة",
+      "devices": [
+        {
+          "id": "dev_0mv2n1x",
+          "licenseId": "lic_mub977ge_rob6",
+          "deviceId": "test_device_e2e_001",
+          "deviceName": "Dr. Receptionist PC",
+          "activatedAt": "2026-09-21T13:01:00.934Z",
+          "lastSeenAt": "2026-09-21T13:01:00.934Z",
+          "isActive": true
+        },
+        {
+          "id": "dev_vvf9zq4",
+          "licenseId": "lic_mub977ge_rob6",
+          "deviceId": "DEV-12A1-8A61-463C-B0F1",
+          "deviceName": "Windows Desktop (12 Cores)",
+          "activatedAt": "2026-09-21T13:38:31.511Z",
+          "lastSeenAt": "2026-09-21T13:38:31.511Z",
+          "isActive": true
+        }
+      ],
+      "customerId": "cust_main_clinic"
+    },
+    {
+      "id": "lic_mub7goam",
+      "licenseKey": "CLIN-SFA9-TQ4G-LFVE",
+      "planType": "trial",
+      "maxDevices": 1,
+      "status": "SUSPENDED",
+      "createdAt": "2026-09-21T12:12:23.422Z",
+      "startsAt": "2026-09-21T12:12:23.422Z",
+      "expiresAt": "2027-09-16T12:12:23.422Z",
+      "notes": "",
+      "devices": [],
+      "customerId": "cust_main_clinic"
+    },
+    {
+      "id": "lic_mub5ef6x",
+      "licenseKey": "CLIN-BQCX-E7M8-TAL4",
+      "planType": "yearly",
+      "maxDevices": 1,
+      "status": "ACTIVE",
+      "createdAt": "2026-09-21T11:14:39.081Z",
+      "startsAt": "2026-09-21T11:14:39.081Z",
+      "expiresAt": "2027-09-16T11:14:39.081Z",
+      "notes": "",
+      "devices": [],
+      "customerId": "cust_main_clinic"
+    },
+    {
       "id": "lic_mu72tgli",
       "licenseKey": "CLIN-MQXL-QU9K-A3GE",
       "planType": "monthly",
@@ -10,19 +91,21 @@
       "startsAt": "2026-09-18T14:51:17.190Z",
       "expiresAt": "2068-03-11T14:51:17.190Z",
       "notes": "test",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_mu6xdwpz",
       "licenseKey": "CLIN-CMSG-84PM-ZRZ2",
       "planType": "trial",
       "maxDevices": 1,
-      "status": "SUSPENDED",
+      "status": "REVOKED",
       "createdAt": "2026-09-18T12:19:13.511Z",
       "startsAt": "2026-09-18T12:19:13.511Z",
       "expiresAt": "2027-09-13T12:19:13.511Z",
       "notes": "",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_mu64bjym",
@@ -34,7 +117,8 @@
       "startsAt": "2026-09-17T22:45:34.798Z",
       "expiresAt": "2027-09-12T22:45:34.798Z",
       "notes": "",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_year_001",
@@ -46,7 +130,8 @@
       "startsAt": "2026-09-17T22:35:40.755Z",
       "expiresAt": "2027-09-17T22:35:40.755Z",
       "notes": "ترخيص سنوي للعيادة الرئيسية (جهاز واحد)",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_month_002",
@@ -58,7 +143,8 @@
       "startsAt": "2026-09-17T22:35:40.755Z",
       "expiresAt": "2026-10-17T22:35:40.755Z",
       "notes": "ترخيص شهري لجهازين (الاستقبال + الطبيب)",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_trial_003",
@@ -80,7 +166,8 @@
           "lastSeenAt": "2026-09-21T11:03:15.918Z",
           "isActive": true
         }
-      ]
+      ],
+      "customerId": "cust_main_clinic"
     },
     {
       "id": "lic_exp_004",
@@ -92,7 +179,85 @@
       "startsAt": "2026-08-13T22:35:40.755Z",
       "expiresAt": "2026-09-12T22:35:40.755Z",
       "notes": "ترخيص منتهي الصلاحية لاختبار شاشات التنبيه",
-      "devices": []
+      "devices": [],
+      "customerId": "cust_main_clinic"
+    }
+  ],
+  "customers": [
+    {
+      "id": "cust_main_clinic",
+      "name": "العيادة الطبية الرئيسية",
+      "phone": "+963-999-000111",
+      "email": "clinic@example.com",
+      "notes": "العميل الافتراضي الأول للنظام",
+      "createdAt": "2026-09-21T13:12:41.337Z",
+      "totalPaid": 0
+    }
+  ],
+  "plans": [
+    {
+      "id": "plan_trial_14d",
+      "name": "باقة تجريبية (14 يوم)",
+      "description": "فترة اختبار مجانية لكافة ميزات البرنامج",
+      "durationDays": 14,
+      "price": 0,
+      "currency": "USD",
+      "isActive": true,
+      "createdAt": "2026-09-21T12:55:47.535Z"
+    },
+    {
+      "id": "plan_monthly",
+      "name": "اشتراك شهري",
+      "description": "تجديد شهري مرن",
+      "durationDays": 30,
+      "price": 30,
+      "currency": "USD",
+      "isActive": true,
+      "createdAt": "2026-09-21T12:55:47.535Z"
+    },
+    {
+      "id": "plan_half_year",
+      "name": "اشتراك 6 أشهر",
+      "description": "باقة نصف سنوية بتوفير 15%",
+      "durationDays": 180,
+      "price": 150,
+      "currency": "USD",
+      "isActive": true,
+      "createdAt": "2026-09-21T12:55:47.535Z"
+    },
+    {
+      "id": "plan_yearly",
+      "name": "اشتراك سنوي (الأكثر طلباً)",
+      "description": "سنة كاملة مع دعم فني وتحديثات مستمرة",
+      "durationDays": 365,
+      "price": 250,
+      "currency": "USD",
+      "isActive": true,
+      "createdAt": "2026-09-21T12:55:47.535Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "PAY-2026-X7YFC",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_mub9ai1g_kk66",
+      "amount": 250,
+      "currency": "USD",
+      "paidAt": "2026-09-21T13:03:34.628Z",
+      "note": "دفعة اشتراك عند إنشاء الترخيص (yearly)",
+      "adminId": "admin",
+      "type": "new"
+    },
+    {
+      "id": "PAY-2026-672EF",
+      "licenseId": "lic_mub977ge_rob6",
+      "customerId": "cust_mub977g0_lps6",
+      "amount": 250,
+      "currency": "USD",
+      "paidAt": "2026-09-21T13:01:00.926Z",
+      "note": "دفعة اشتراك عند إنشاء الترخيص (yearly)",
+      "adminId": "admin",
+      "type": "new"
     }
   ],
   "logs": [
@@ -239,6 +404,234 @@
       "action": "refresh",
       "timestamp": "2026-09-21T11:03:15.918Z",
       "ip": "::1"
+    },
+    {
+      "id": "log_1789989289375",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "activate",
+      "timestamp": "2026-09-21T11:14:49.375Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989291407",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:51.407Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989291696",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:51.696Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989291864",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:51.864Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989292027",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:52.027Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989292170",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:52.170Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789989292515",
+      "licenseId": "lic_mub5ef6x",
+      "deviceId": "DEV-7F5D-7100-CAB2-66C7",
+      "action": "refresh",
+      "timestamp": "2026-09-21T11:14:52.515Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789992756476",
+      "licenseId": "lic_mub7goam",
+      "deviceId": "DEV-2E2E-3D54-F273-E856",
+      "action": "activate",
+      "timestamp": "2026-09-21T12:12:36.476Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789995660934",
+      "licenseId": "lic_mub977ge_rob6",
+      "deviceId": "test_device_e2e_001",
+      "action": "activate",
+      "timestamp": "2026-09-21T13:01:00.934Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789995814635",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "deviceId": "test_device_e2e_001",
+      "action": "activate",
+      "timestamp": "2026-09-21T13:03:34.635Z",
+      "ip": "::1"
+    },
+    {
+      "id": "log_1789997911511",
+      "licenseId": "lic_mub977ge_rob6",
+      "deviceId": "DEV-12A1-8A61-463C-B0F1",
+      "action": "activate",
+      "timestamp": "2026-09-21T13:38:31.511Z",
+      "ip": "::1"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "aud_mub9mzlj_xwvg",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من REVOKED إلى SUSPENDED",
+      "timestamp": "2026-09-21T13:13:17.239Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mxn8_shqy",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من REVOKED إلى REVOKED",
+      "timestamp": "2026-09-21T13:13:14.708Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9ms60_g41l",
+      "action": "status_change",
+      "licenseId": "lic_mu6xdwpz",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من SUSPENDED إلى REVOKED",
+      "timestamp": "2026-09-21T13:13:07.608Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mppl_tsit",
+      "action": "status_change",
+      "licenseId": "lic_mu6xdwpz",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من ACTIVE إلى SUSPENDED",
+      "timestamp": "2026-09-21T13:13:04.425Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mp54_t7hu",
+      "action": "status_change",
+      "licenseId": "lic_mu6xdwpz",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من SUSPENDED إلى ACTIVE",
+      "timestamp": "2026-09-21T13:13:03.688Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mjep_5tcw",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من REVOKED إلى REVOKED",
+      "timestamp": "2026-09-21T13:12:56.257Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mhqi_c82z",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من REVOKED إلى REVOKED",
+      "timestamp": "2026-09-21T13:12:54.090Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9mg4m_z9yy",
+      "action": "status_change",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_main_clinic",
+      "details": "تغيير حالة الترخيص من ACTIVE إلى REVOKED",
+      "timestamp": "2026-09-21T13:12:52.006Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9m7vx_mpnq",
+      "action": "customer_deleted",
+      "customerId": "cust_main_clinic",
+      "details": "تم حذف العميل: العيادة الطبية الرئيسية",
+      "timestamp": "2026-09-21T13:12:41.325Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9k70z_mt63",
+      "action": "customer_deleted",
+      "customerId": "cust_main_clinic",
+      "details": "تم حذف العميل: العيادة الطبية الرئيسية",
+      "timestamp": "2026-09-21T13:11:06.899Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9k5ci_lt2i",
+      "action": "customer_deleted",
+      "customerId": "cust_mub977g0_lps6",
+      "details": "تم حذف العميل: عيادة الشفاء التخصصية",
+      "timestamp": "2026-09-21T13:11:04.722Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9k40i_nx94",
+      "action": "customer_deleted",
+      "customerId": "cust_mub9ai1g_kk66",
+      "details": "تم حذف العميل: عيادة الشفاء التخصصية",
+      "timestamp": "2026-09-21T13:11:02.994Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9ai1w_6e24",
+      "action": "license_created",
+      "licenseId": "lic_mub9ai1w_yoyg",
+      "customerId": "cust_mub9ai1g_kk66",
+      "details": "تم إصدار ترخيص جديد: CLIN-EUEV-ZFGJ-CWSV (الخطة: yearly)",
+      "timestamp": "2026-09-21T13:03:34.628Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub9ai1g_c6ii",
+      "action": "customer_created",
+      "customerId": "cust_mub9ai1g_kk66",
+      "details": "تمت إضافة العميل الجديد: عيادة الشفاء التخصصية",
+      "timestamp": "2026-09-21T13:03:34.612Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub977ge_75of",
+      "action": "license_created",
+      "licenseId": "lic_mub977ge_rob6",
+      "customerId": "cust_mub977g0_lps6",
+      "details": "تم إصدار ترخيص جديد: CLIN-KWEG-93TG-6X7B (الخطة: yearly)",
+      "timestamp": "2026-09-21T13:01:00.926Z",
+      "adminId": "admin"
+    },
+    {
+      "id": "aud_mub977g0_4uab",
+      "action": "customer_created",
+      "customerId": "cust_mub977g0_lps6",
+      "details": "تمت إضافة العميل الجديد: عيادة الشفاء التخصصية",
+      "timestamp": "2026-09-21T13:01:00.912Z",
+      "adminId": "admin"
     }
   ]
 }

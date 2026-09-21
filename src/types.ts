@@ -154,5 +154,6 @@ export interface LocalLicenseState {
   isOfflineGraceValid: boolean
   isExpired: boolean
   clockTampered: boolean
+  publicKeyJwk?: JsonWebKey
   lastErrorMessage?: string
 }

@@ -45,6 +45,16 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
   const [customCurrency, setCustomCurrency] = useState("")
   const licenseState = licenseStore.get()
 
+  // Import restore flow state
+  const [pendingImport, setPendingImport] = useState<{
+    json: string
+    stats: { patients: number; doctors: number; appointments: number; visits: number }
+    exportedAt: string
+  } | null>(null)
+  const [importSuccess, setImportSuccess] = useState<{
+    patients: number; doctors: number; appointments: number; visits: number
+  } | null>(null)
+
   useEffect(() => {
     const s = settingsStore.get()
     setForm(s)
@@ -85,17 +95,45 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
     const reader = new FileReader()
     reader.onload = (ev) => {
       try {
-        importBackup(ev.target?.result as string)
-        setForm(settingsStore.get())
-        onRefresh()
+        const json = ev.target?.result as string
+        const data = JSON.parse(json)
+        // Validate it looks like a clinic backup
+        if (!data.patients && !data.doctors && !data.appointments) {
+          setImportError("الملف غير صالح: لا يبدو أنه نسخة احتياطية من هذا البرنامج")
+          return
+        }
+        // Show confirmation modal with stats preview
+        setPendingImport({
+          json,
+          stats: {
+            patients: Array.isArray(data.patients) ? data.patients.length : 0,
+            doctors: Array.isArray(data.doctors) ? data.doctors.length : 0,
+            appointments: Array.isArray(data.appointments) ? data.appointments.length : 0,
+            visits: Array.isArray(data.visits) ? data.visits.length : 0,
+          },
+          exportedAt: data.exportedAt ?? "",
+        })
         setImportError("")
-        alert("تم استيراد البيانات بنجاح")
       } catch {
-        setImportError("الملف غير صالح أو تالف")
+        setImportError("الملف غير صالح أو تالف — تأكد أنه ملف .json صحيح")
       }
     }
     reader.readAsText(file)
     e.target.value = ""
+  }
+
+  function confirmImport() {
+    if (!pendingImport) return
+    try {
+      importBackup(pendingImport.json)
+      setForm(settingsStore.get())
+      setImportSuccess(pendingImport.stats)
+      setPendingImport(null)
+      onRefresh()
+    } catch {
+      setImportError("حدث خطأ أثناء الاستيراد — يرجى المحاولة مجدداً")
+      setPendingImport(null)
+    }
   }
 
   function handleWipeDemo() {
@@ -363,21 +401,47 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
         </div>
       </div>
 
-      {/* Backup */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h2 className="font-semibold text-slate-800 mb-1">النسخ الاحتياطي</h2>
-        <p className="text-sm text-slate-500 mb-4">
-          احفظ جميع بيانات العيادة في ملف واحد لاسترجاعها لاحقاً
-        </p>
-        <div className="flex gap-3">
+      {/* Backup & Restore */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <div>
+          <h2 className="font-semibold text-slate-800 mb-1">النسخ الاحتياطي والاستعادة</h2>
+          <p className="text-sm text-slate-500">
+            صدّر نسخة احتياطية من جميع بياناتك أو استردّها من ملف سابق عند حدوث أي مشكلة
+          </p>
+        </div>
+
+        {/* Export */}
+        <div className="flex items-center gap-4 p-4 bg-teal-50 border border-teal-100 rounded-xl">
+          <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <Download size={18} className="text-teal-700" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-slate-800 text-sm">تصدير نسخة احتياطية</div>
+            <div className="text-xs text-slate-500 mt-0.5">
+              ينزّل ملف .json يحتوي على جميع المرضى، المواعيد، الأطباء، والفواتير
+            </div>
+          </div>
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors text-sm font-medium"
+            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors text-sm font-medium shadow-sm cursor-pointer"
           >
-            <Download size={16} /> تصدير نسخة احتياطية
+            <Download size={15} /> تصدير
           </button>
-          <label className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors text-sm font-medium">
-            <Upload size={16} /> استيراد نسخة احتياطية
+        </div>
+
+        {/* Import / Restore */}
+        <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+          <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <Upload size={18} className="text-blue-700" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-slate-800 text-sm">استعادة من نسخة احتياطية</div>
+            <div className="text-xs text-slate-500 mt-0.5">
+              اختر ملف .json لاستعادة بياناتك — ستحل البيانات المستوردة محل البيانات الحالية
+            </div>
+          </div>
+          <label className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium shadow-sm cursor-pointer">
+            <Upload size={15} /> استعادة
             <input
               type="file"
               accept=".json"
@@ -386,8 +450,48 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
             />
           </label>
         </div>
+
+        {/* Import error */}
         {importError && (
-          <p className="text-red-500 text-sm mt-2">{importError}</p>
+          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <AlertTriangle size={15} className="flex-shrink-0" />
+            <span>{importError}</span>
+            <button onClick={() => setImportError("")} className="mr-auto text-red-400 hover:text-red-600 cursor-pointer">
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Import success banner */}
+        {importSuccess && (
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-3">
+            <div className="flex items-center gap-2 text-emerald-800 font-semibold text-sm">
+              <CheckCircle size={18} className="text-emerald-600" />
+              تمت استعادة النسخة الاحتياطية بنجاح!
+              <button
+                onClick={() => setImportSuccess(null)}
+                className="mr-auto text-emerald-400 hover:text-emerald-600 cursor-pointer text-xs"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: "مريض", value: importSuccess.patients, color: "text-blue-600" },
+                { label: "طبيب", value: importSuccess.doctors, color: "text-purple-600" },
+                { label: "موعد", value: importSuccess.appointments, color: "text-amber-600" },
+                { label: "زيارة", value: importSuccess.visits, color: "text-teal-600" },
+              ].map((s) => (
+                <div key={s.label} className="bg-white rounded-lg p-2 text-center border border-emerald-100">
+                  <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
+                  <div className="text-[11px] text-slate-500">{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-emerald-700">
+              تم تحميل جميع البيانات من ملف النسخة الاحتياطية. أعد تشغيل البرنامج إذا لاحظت أي اختلاف.
+            </p>
+          </div>
         )}
       </div>
 
@@ -482,6 +586,68 @@ export default function Settings({ onRefresh, onNavigate, onLock }: Props) {
               <button
                 onClick={() => setConfirmClear(false)}
                 className="flex-1 py-2.5 border border-slate-200 rounded-xl text-slate-700"
+              >
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Confirm Restore Modal */}
+      {pendingImport && (
+        <Modal
+          title="تأكيد استعادة النسخة الاحتياطية"
+          onClose={() => setPendingImport(null)}
+          small
+        >
+          <div className="space-y-4">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto bg-blue-50 rounded-full">
+              <Upload size={28} className="text-blue-600" />
+            </div>
+
+            <p className="text-center text-slate-700 font-medium">
+              هل أنت متأكد من استعادة هذه النسخة الاحتياطية؟
+            </p>
+
+            {pendingImport.exportedAt && (
+              <p className="text-center text-xs text-slate-500">
+                تاريخ النسخة:{" "}
+                {new Date(pendingImport.exportedAt).toLocaleString("ar-SA")}
+              </p>
+            )}
+
+            <div className="grid grid-cols-4 gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+              {[
+                { label: "مريض", value: pendingImport.stats.patients, color: "text-blue-600" },
+                { label: "طبيب", value: pendingImport.stats.doctors, color: "text-purple-600" },
+                { label: "موعد", value: pendingImport.stats.appointments, color: "text-amber-600" },
+                { label: "زيارة", value: pendingImport.stats.visits, color: "text-teal-600" },
+              ].map((s) => (
+                <div key={s.label} className="text-center">
+                  <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+                  <div className="text-[11px] text-slate-500">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+              <AlertTriangle size={14} className="flex-shrink-0 mt-0.5 text-amber-600" />
+              <span>
+                ستُستبدل البيانات الحالية بالكامل ببيانات النسخة الاحتياطية. هذا الإجراء لا يمكن التراجع عنه.
+              </span>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={confirmImport}
+                className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium text-sm transition-colors cursor-pointer"
+              >
+                نعم، استعادة البيانات
+              </button>
+              <button
+                onClick={() => setPendingImport(null)}
+                className="flex-1 py-2.5 border border-slate-200 rounded-xl text-slate-700 text-sm hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 إلغاء
               </button>

@@ -56,12 +56,17 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
     setLicenseState(licenseStore.get())
   }
 
-  // Format License Key input: XXXX-XXXX-XXXX-XXXX
+  // Format License Key input: allow smooth typing or pasting
   function handleKeyChange(e: React.ChangeEvent<HTMLInputElement>) {
-    let raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
-    if (raw.length > 16) raw = raw.slice(0, 16)
-    const parts = raw.match(/.{1,4}/g) || []
-    setKeyInput(parts.join("-"))
+    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "")
+    // If user pasted raw 16 characters without dashes, auto format with dashes
+    const rawClean = val.replace(/[^A-Z0-9]/g, "")
+    if (!val.includes("-") && rawClean.length >= 8) {
+      const parts = rawClean.slice(0, 16).match(/.{1,4}/g) || []
+      setKeyInput(parts.join("-"))
+    } else {
+      setKeyInput(val.slice(0, 24))
+    }
   }
 
   // Activate license on this device
@@ -87,12 +92,17 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
       )
 
       if (res.success && res.token) {
-        licenseStore.applyActivation(res.token, dev.deviceId, dev.deviceName)
+        licenseStore.applyActivation(
+          res.token,
+          dev.deviceId,
+          dev.deviceName,
+          res.publicKeyJwk,
+        )
         setLicenseState(licenseStore.get())
         setKeyInput("")
         setActionMessage({
           type: "success",
-          text: "تم تفعيل الترخيص بنجاح وربطه بهذا الجهاز!",
+          text: "تم تفعيل الترخيص بنجاح وربطه بهذا الجهاز وتوثيق المفتاح الرقمي!",
         })
         if (onRefresh) onRefresh()
       } else {
@@ -126,11 +136,16 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
       )
 
       if (res.success && res.token) {
-        licenseStore.applyActivation(res.token, dev.deviceId, dev.deviceName)
+        licenseStore.applyActivation(
+          res.token,
+          dev.deviceId,
+          dev.deviceName,
+          res.publicKeyJwk,
+        )
         setLicenseState(licenseStore.get())
         setActionMessage({
           type: "success",
-          text: "تم تحديث وتمديد صلاحية الترخيص بنجاح!",
+          text: "تم تحديث وتمديد صلاحية الترخيص بنجاح وتوثيق التوقيع الرقمي!",
         })
         if (onRefresh) onRefresh()
       } else {
@@ -321,16 +336,53 @@ export default function LicenseManager({ onRefresh, onLock }: Props) {
 
       {/* Clock Tamper Alert */}
       {licenseState.clockTampered && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm flex items-start gap-3">
+        <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-900 dark:text-amber-200 text-sm flex items-start gap-3">
           <Clock size={20} className="text-amber-600 mt-0.5 flex-shrink-0" />
           <div>
             <div className="font-bold">
               تحذير أمني: تم اكتشاف تعديل في وقت الجهاز
             </div>
-            <p className="mt-1 text-xs text-amber-700">
+            <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
               تم إرجاع ساعة الجهاز للوراء بشكل غير منطقي. يرجى ضبط الساعة
               الصحيحة والاتصال بالسيرفر للتحقق من الترخيص. لم يتم حذف أي من
               بيانات العيادة.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Subscription Expiration Warning Alert (30, 7, 1 day) */}
+      {isLicensed && daysRemaining <= 30 && (
+        <div
+          className={`p-4 rounded-2xl border text-sm flex items-start gap-3 ${
+            daysRemaining <= 1
+              ? "bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800 text-red-900 dark:text-red-200"
+              : daysRemaining <= 7
+                ? "bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200"
+                : "bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200"
+          }`}
+        >
+          <AlertTriangle
+            size={20}
+            className={`mt-0.5 flex-shrink-0 ${
+              daysRemaining <= 1
+                ? "text-red-600"
+                : daysRemaining <= 7
+                  ? "text-amber-600"
+                  : "text-blue-600"
+            }`}
+          />
+          <div className="flex-1">
+            <div className="font-bold">
+              {daysRemaining <= 1
+                ? "تنبيه عاجل: سينتهي اشتراك العيادة خلال أقل من 24 ساعة!"
+                : daysRemaining <= 7
+                  ? `تحذير هام: سينتهي اشتراك الترخيص بعد ${daysRemaining} أيام`
+                  : `تذكير بموعد التجديد: متبقٍ ${daysRemaining} يوماً على نهاية الاشتراك`}
+            </div>
+            <p className="mt-0.5 text-xs opacity-85">
+              لتجنب توقف شاشات وإجراءات البرنامج عند انتهاء الصلاحية، يرجى
+              التواصل مع إدارة النظام لتجديد الترخيص والحصول على كود التمديد.
             </p>
           </div>
         </div>

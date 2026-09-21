@@ -2,7 +2,7 @@ directories:
   output: release
   buildResources: build
 appId: com.clinic.management.desktop
-productName: ClinicManagement
+productName: My clinic
 files:
   - filter:
       - dist/**/*

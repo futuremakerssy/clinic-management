@@ -7,15 +7,29 @@
  * Private key is stored securely on the License Server.
  */
 
-// Master Public Key for ECDSA P-256 (JWK format)
-// Paired with the server's private key for offline signature verification
-export const MASTER_PUBLIC_KEY_JWK: JsonWebKey = {
+// Fallback ECDSA P-256 Public Key (matches server_data/keys.json default)
+export const FALLBACK_PUBLIC_KEY_JWK: JsonWebKey = {
   kty: "EC",
+  x: "HvUsOTLtKTF_6n5ClbKprSj49-YRvZeybjLPI8RGrto",
+  y: "gmgalv0cCd_lqeqJ4s4kzLNUpLXMy6zhHHE_91eBihU",
   crv: "P-256",
-  x: "W_v_8N7R9kYj1L_v9bB8m_F0s3K7v2kG8x9wE2bA4_I",
-  y: "H7m_9B4q8P3c0R2s1V7z6X5n4M3b2K1j0G9f8D7s6A5",
-  key_ops: ["verify"],
   ext: true,
+}
+
+// Read public key stored from activation response in localStorage
+export function getStoredPublicKey(): JsonWebKey | null {
+  try {
+    const raw = localStorage.getItem("clinic_license_state")
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed.publicKeyJwk && parsed.publicKeyJwk.kty === "EC") {
+        return parsed.publicKeyJwk
+      }
+    }
+  } catch {
+    // Ignore parse error
+  }
+  return null
 }
 
 // Canonicalize an object to deterministic JSON string
@@ -57,11 +71,12 @@ export function bytesToBase64(bytes: Uint8Array): string {
 
 // Import ECDSA P-256 Public Key from JWK
 export async function importPublicKey(
-  jwk: JsonWebKey = MASTER_PUBLIC_KEY_JWK,
+  jwk?: JsonWebKey,
 ): Promise<CryptoKey> {
+  const resolvedJwk = jwk || getStoredPublicKey() || FALLBACK_PUBLIC_KEY_JWK
   return await crypto.subtle.importKey(
     "jwk",
-    jwk,
+    resolvedJwk,
     {
       name: "ECDSA",
       namedCurve: "P-256",
@@ -75,7 +90,7 @@ export async function importPublicKey(
 export async function verifySignature(
   payload: unknown,
   signatureBase64: string,
-  publicKeyJwk: JsonWebKey = MASTER_PUBLIC_KEY_JWK,
+  publicKeyJwk?: JsonWebKey,
 ): Promise<boolean> {
   try {
     const pubKey = await importPublicKey(publicKeyJwk)

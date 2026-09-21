@@ -16,6 +16,8 @@ import {
   Download,
   LogOut,
   Check,
+  Moon,
+  Sun,
 } from "lucide-react"
 import {
   seedDemoData,
@@ -34,6 +36,9 @@ import Billing from "./components/Billing"
 import Settings from "./components/Settings"
 import LicenseManager from "./components/LicenseManager"
 import LicenseGate from "./components/LicenseGate"
+import { licenseStore } from "./lib/licenseStore"
+import { licenseApi } from "./lib/licenseApi"
+import { getDeviceFingerprint } from "./lib/fingerprint"
 import PinLock from "./components/PinLock"
 import InitialSetupModal from "./components/InitialSetupModal"
 import ExitConfirmModal from "./components/ExitConfirmModal"
@@ -68,6 +73,22 @@ export default function App() {
   const [todayCount, setTodayCount] = useState(0)
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false)
 
+  // License validity check — re-evaluated on every refreshKey change
+  const getLicenseValid = () => {
+    const ls = licenseStore.get()
+    return (
+      (ls.status === "ACTIVE" || ls.status === "TRIAL") &&
+      !ls.isExpired &&
+      !ls.clockTampered
+    )
+  }
+  const [isLicenseValid, setIsLicenseValid] = useState(getLicenseValid)
+
+  // Dark mode
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem("clinic_dark_mode") === "true"
+  })
+
   // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false)
 
@@ -80,6 +101,18 @@ export default function App() {
   // Modals state
   const [showExitModal, setShowExitModal] = useState(false)
   const [showSetupModal, setShowSetupModal] = useState(false)
+
+  // Apply dark mode class on html element
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+    localStorage.setItem("clinic_dark_mode", String(isDarkMode))
+  }, [isDarkMode])
+
+  const toggleDarkMode = () => setIsDarkMode((prev) => !prev)
 
   // Set document title & seed demo check
   useEffect(() => {
@@ -100,7 +133,7 @@ export default function App() {
     }
   }, [])
 
-  // Sync today's appointments count & clinic name
+  // Sync today's appointments count, clinic name & license state
   useEffect(() => {
     const s = settingsStore.get()
     if (s.clinicName && s.clinicName.trim()) {
@@ -110,7 +143,57 @@ export default function App() {
       .getAll()
       .filter((a) => a.date === todayISO() && a.status === "scheduled").length
     setTodayCount(scheduled)
+    setIsLicenseValid(getLicenseValid())
   }, [refreshKey])
+
+  // Periodic online license check & offline grace enforcement
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+
+    const checkOnlineLicense = async () => {
+      const ls = licenseStore.get()
+      if (!ls.licenseKey || !ls.token || ls.status !== "ACTIVE") return
+
+      try {
+        const dev = await getDeviceFingerprint()
+        const res = await licenseApi.validate(ls.licenseKey, dev.deviceId)
+        if (res.success && res.token) {
+          licenseStore.applyActivation(
+            res.token,
+            dev.deviceId,
+            dev.deviceName,
+            res.publicKeyJwk,
+          )
+          setIsLicenseValid(getLicenseValid())
+        } else if (res.error && !res.isNetworkError) {
+          // Explicit rejection from server (e.g. revoked, suspended, expired)
+          licenseStore.update({
+            status: (res.license?.status as any) || "EXPIRED",
+            isExpired: true,
+          })
+          setIsLicenseValid(false)
+        }
+      } catch {
+        // Offline - graceful fallback to local verifyOffline
+        const localCheck = await licenseStore.verifyOffline()
+        if (!localCheck.isValid) {
+          setIsLicenseValid(false)
+        }
+      }
+    }
+
+    checkOnlineLicense()
+    timer = setInterval(checkOnlineLicense, 45 * 60 * 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  // Force redirect to license page when subscription is invalid
+  useEffect(() => {
+    if (!isLicenseValid && view !== "license") {
+      setView("license")
+    }
+  }, [isLicenseValid, view])
 
   // Fullscreen listener for F11 & changes
   useEffect(() => {
@@ -212,7 +295,9 @@ export default function App() {
 
   return (
     <div
-      className={`flex h-screen bg-slate-100 overflow-hidden ${
+      className={`flex h-screen overflow-hidden ${
+        isDarkMode ? "bg-slate-950" : "bg-slate-100"
+      } ${
         isFullscreen ? "border-0 p-0 m-0" : ""
       }`}
       dir="rtl"
@@ -221,7 +306,9 @@ export default function App() {
       <aside
         className={`flex-shrink-0 transition-all duration-300 ${
           sidebarOpen ? "w-60" : "w-16"
-        } bg-slate-900 flex flex-col z-20`}
+        } ${
+          isDarkMode ? "bg-slate-900 border-r border-slate-800" : "bg-slate-900"
+        } flex flex-col z-20`}
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-700/50">
@@ -265,33 +352,43 @@ export default function App() {
 
         {/* Nav */}
         <nav className="flex-1 py-4 space-y-1 overflow-y-auto px-2">
-          {NAV.map(({ view: v, label, Icon }) => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              title={!sidebarOpen ? label : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group cursor-pointer ${
-                view === v
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-900/30"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
-              }`}
-            >
-              <Icon size={18} className="flex-shrink-0" />
-              {sidebarOpen && <span className="truncate">{label}</span>}
-              {/* Badge for appointments */}
-              {v === "appointments" && todayCount > 0 && (
-                <span
-                  className={`mr-auto text-xs px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${
-                    view === v
-                      ? "bg-white/20 text-white"
-                      : "bg-blue-600 text-white"
-                  }`}
-                >
-                  {todayCount}
-                </span>
-              )}
-            </button>
-          ))}
+          {NAV.map(({ view: v, label, Icon }) => {
+            const isDisabled = !isLicenseValid && v !== "license"
+            return (
+              <button
+                key={v}
+                onClick={() => !isDisabled && setView(v)}
+                title={isDisabled ? "الاشتراك منتهٍ — يرجى التجديد أولاً" : (!sidebarOpen ? label : undefined)}
+                disabled={isDisabled}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
+                  isDisabled
+                    ? "opacity-35 cursor-not-allowed"
+                    : "cursor-pointer"
+                } ${
+                  view === v
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-900/30"
+                    : isDisabled
+                    ? "text-slate-600"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                }`}
+              >
+                <Icon size={18} className="flex-shrink-0" />
+                {sidebarOpen && <span className="truncate">{label}</span>}
+                {/* Badge for appointments */}
+                {v === "appointments" && todayCount > 0 && (
+                  <span
+                    className={`mr-auto text-xs px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${
+                      view === v
+                        ? "bg-white/20 text-white"
+                        : "bg-blue-600 text-white"
+                    }`}
+                  >
+                    {todayCount}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </nav>
 
         {/* Bottom controls */}
@@ -321,20 +418,34 @@ export default function App() {
       {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
-        <header className="flex-shrink-0 h-14 bg-white border-b border-slate-200 flex items-center px-4 sm:px-6 gap-3 sm:gap-4 z-10">
+        <header className={`flex-shrink-0 h-14 border-b flex items-center px-4 sm:px-6 gap-3 sm:gap-4 z-10 ${
+          isDarkMode
+            ? "bg-slate-900 border-slate-800"
+            : "bg-white border-slate-200"
+        }`}>
           <div className="flex items-center gap-2">
-            <h2 className="font-bold text-slate-800 text-sm sm:text-base">
+            <h2 className={`font-bold text-sm sm:text-base ${
+              isDarkMode ? "text-slate-100" : "text-slate-800"
+            }`}>
               {VIEW_LABELS[view]}
             </h2>
-            <span className="hidden lg:inline text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-200/60">
+            <span className={`hidden lg:inline text-xs px-2 py-0.5 rounded font-semibold border ${
+              isDarkMode
+                ? "bg-blue-900/40 text-blue-300 border-blue-700/60"
+                : "bg-blue-50 text-blue-700 border-blue-200/60"
+            }`}>
               My clinic
             </span>
           </div>
 
           <div className="mr-auto flex items-center gap-2 sm:gap-3">
             {/* Today badge */}
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/80">
-              <Calendar size={13} className="text-slate-500" />
+            <div className={`hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border ${
+              isDarkMode
+                ? "text-slate-400 bg-slate-800 border-slate-700"
+                : "text-slate-600 bg-slate-100 border-slate-200/80"
+            }`}>
+              <Calendar size={13} className={isDarkMode ? "text-slate-500" : "text-slate-500"} />
               <span>
                 {new Date().toLocaleDateString("ar-SA", {
                   weekday: "long",
@@ -361,10 +472,28 @@ export default function App() {
               )}
             </button>
 
+            {/* Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleDarkMode}
+              className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                isDarkMode
+                  ? "bg-slate-800 text-yellow-400 hover:bg-slate-700 border border-slate-700"
+                  : "hover:bg-slate-100 text-slate-500 hover:text-slate-700"
+              }`}
+              title={isDarkMode ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
             {/* Notification bell */}
             <button
               onClick={() => setView("appointments")}
-              className="relative p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+              className={`relative p-2 rounded-xl transition-colors cursor-pointer ${
+                isDarkMode
+                  ? "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  : "hover:bg-slate-100 text-slate-500 hover:text-slate-700"
+              }`}
               title="المواعيد المجدولة لليوم"
             >
               <Bell size={18} />
@@ -382,6 +511,8 @@ export default function App() {
               className={`p-2 rounded-xl transition-colors cursor-pointer ${
                 isFullscreen
                   ? "bg-blue-50 text-blue-600 border border-blue-200"
+                  : isDarkMode
+                  ? "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                   : "hover:bg-slate-100 text-slate-500 hover:text-slate-700"
               }`}
               title={
@@ -410,7 +541,11 @@ export default function App() {
             <button
               type="button"
               onClick={() => setShowExitModal(true)}
-              className="hidden sm:flex items-center gap-1 p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-colors cursor-pointer"
+              className={`hidden sm:flex items-center gap-1 p-2 rounded-xl transition-colors cursor-pointer ${
+                isDarkMode
+                  ? "text-slate-500 hover:bg-red-950/60 hover:text-red-400"
+                  : "hover:bg-red-50 text-slate-400 hover:text-red-600"
+              }`}
               title="إغلاق والتأكد من النسخ الاحتياطي"
             >
               <LogOut size={17} />
@@ -422,7 +557,9 @@ export default function App() {
         <LicenseGate onNavigate={navigate} currentView={view} />
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-slate-50/50">
+        <main className={`flex-1 overflow-auto ${
+          isDarkMode ? "bg-slate-950" : "bg-slate-50/50"
+        }`}>
           {view === "dashboard" && (
             <Dashboard onNavigate={navigate} refresh={refreshKey} />
           )}
@@ -454,7 +591,13 @@ export default function App() {
               />
             ))}
           {view === "license" &&
-            (!isAdminUnlocked ? (
+            // Bypass PIN when license is invalid so user can always renew
+            (!isLicenseValid ? (
+              <LicenseManager
+                onRefresh={refresh}
+                onLock={() => setIsAdminUnlocked(false)}
+              />
+            ) : !isAdminUnlocked ? (
               <PinLock
                 title="نظام الاشتراك والترخيص مقفل برمز سري"
                 subtitle="لحماية رخصة التطبيق وإدارة ربط الأجهزة، يرجى إدخال رمز الأمان السري (PIN)"

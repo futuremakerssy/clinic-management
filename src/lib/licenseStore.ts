@@ -24,6 +24,7 @@ const DEFAULT_STATE: LocalLicenseState = {
   isOfflineGraceValid: false,
   isExpired: true,
   clockTampered: false,
+  publicKeyJwk: undefined,
 }
 
 function loadState(): LocalLicenseState {
@@ -112,9 +113,11 @@ export const licenseStore = {
     token: ActivationToken,
     deviceId: string,
     deviceName: string,
+    publicKeyJwk?: JsonWebKey,
   ): LocalLicenseState => {
     const now = Date.now()
     const payload = token.payload
+    const current = loadState()
 
     const newState: LocalLicenseState = {
       licenseKey: payload.licenseKey,
@@ -131,6 +134,7 @@ export const licenseStore = {
       isOfflineGraceValid: true,
       isExpired: new Date(payload.expiresAt).getTime() < now,
       clockTampered: false,
+      publicKeyJwk: publicKeyJwk || current.publicKeyJwk,
       lastErrorMessage: undefined,
     }
 
@@ -191,6 +195,7 @@ export const licenseStore = {
     const isSigValid = await verifySignature(
       state.token.payload,
       state.token.signature,
+      state.publicKeyJwk,
     )
     if (!isSigValid) {
       return {
